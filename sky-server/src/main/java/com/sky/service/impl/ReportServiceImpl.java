@@ -37,7 +37,7 @@ public class ReportServiceImpl implements ReportService {
         }
         dateList.add(end);
 
-        List<BigDecimal> turnoverList = new ArrayList<>();
+        List<Double> turnoverList = new ArrayList<>();
         for (LocalDate date : dateList) {
             //select sum(amount) from orders where status = ? and order_time > ? and order_time < ?
             LocalDateTime beginTime = LocalDateTime.of(date, LocalTime.MIN);
@@ -46,8 +46,8 @@ public class ReportServiceImpl implements ReportService {
             map.put("begin",beginTime);
             map.put("end",endTime);
             map.put("status",Orders.COMPLETED);
-            BigDecimal dayTurnover = orderMapper.sumByMap(map);
-            dayTurnover = dayTurnover == null ? BigDecimal.valueOf(0.0) : dayTurnover;
+            Double dayTurnover = orderMapper.sumByMap(map);
+            dayTurnover = dayTurnover == null ? 0.0 : dayTurnover;
             turnoverList.add(dayTurnover);
         }
         TurnoverReportVO turnoverReportVO = new TurnoverReportVO();
@@ -55,7 +55,7 @@ public class ReportServiceImpl implements ReportService {
                 .map(LocalDate::toString)
                 .collect(Collectors.joining(",")));
         turnoverReportVO.setTurnoverList(turnoverList.stream()
-                .map(BigDecimal::toString)
+                .map(Object::toString)
                 .collect(Collectors.joining(",")));
         return turnoverReportVO;
     }
