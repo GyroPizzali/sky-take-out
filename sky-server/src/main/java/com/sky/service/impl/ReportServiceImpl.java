@@ -1,10 +1,12 @@
 package com.sky.service.impl;
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import io.swagger.models.auth.In;
@@ -117,6 +119,19 @@ public class ReportServiceImpl implements ReportService {
                 .dateList(dateList.stream().map(LocalDate::toString).collect(Collectors.joining(",")))
                 .orderCountList(orderCountList.stream().map(Object::toString).collect(Collectors.joining(",")))
                 .validOrderCountList(validOrderCountList.stream().map(Object::toString).collect(Collectors.joining(",")))
+                .build();
+    }
+
+    @Override
+    public SalesTop10ReportVO getTop10(LocalDate begin, LocalDate end) {
+        LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+        List<GoodsSalesDTO> list = orderMapper.getSalesTop10(begin,end);
+        String nameList = list.stream().map(GoodsSalesDTO::getName).collect(Collectors.joining(","));
+        String numberList = list.stream().map(o -> o.getNumber().toString()).collect(Collectors.joining(","));
+        return SalesTop10ReportVO.builder()
+                .nameList(nameList)
+                .numberList(numberList)
                 .build();
     }
 
